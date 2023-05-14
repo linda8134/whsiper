@@ -23,11 +23,18 @@ export default function Home() {
       return;
     }
     handleSyncLogedUser({chatid: chatId, passid: zupass.pcd.id})
-  },[status])
+  },[status, chatId])
 
   const handleSyncLogedUser = useCallback((params:any) => {
-    axios.get(`${window.origin}?${qs.stringify(params)}`)
-  },[])
+    if(!chatId){
+      return ;
+    }
+    axios.get(`https://8.217.92.45:9529/zupass?${qs.stringify(params)}`, {headers: {'Access-Control-Allow-Origin': '*'}}).then(resp => {
+      console.log(resp)
+    }).catch(error => {
+      console.log(error)
+    })
+  },[chatId])
   return (
     <div className="min-h-screen px-4 py-8 flex justify-center items-center">
       <main className="flex flex-col bg-gray-100 items-center gap-8 rounded-2xl max-w-screen-sm mx-auto p-9">
