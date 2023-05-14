@@ -1,25 +1,47 @@
 import { useZupass, ZupassLoginButton } from "zukit";
 import { useSearchParams } from "next/navigation";
-import {useEffect} from 'react';
-
+import {useEffect, useState, useCallback} from 'react';
+import qs from 'qs';
+import axios from 'axios';
+import logoIcon from '../assets/logo.png';
+import Image from "next/image";
 
 export default function Home() {
   const [zupass] = useZupass();
+  const { status } = zupass;
   const searchParams = useSearchParams();
-  const chatId = searchParams.get('chatId') || ''
+  const chatId = searchParams.get('chatId');
   useEffect(() => {
     if(!chatId){
       return ;
     }
     localStorage.setItem('chatId', chatId)
   },[chatId])
+
+  useEffect(() => {
+    if(status !== 'logged-in'){
+      return;
+    }
+    handleSyncLogedUser({chatid: chatId, passid: zupass.pcd.id})
+  },[status])
+
+  const handleSyncLogedUser = useCallback((params:any) => {
+    axios.get(`${window.origin}?${qs.stringify(params)}`)
+  },[])
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-8">
-      <main className="flex flex-col items-center gap-8 bg-white rounded-2xl max-w-screen-sm mx-auto h-[24rem] p-8">
-        <h1 className="font-bold text-2xl">Zukit Example</h1>
+    <div className="min-h-screen px-4 py-8 flex justify-center items-center">
+      <main className="flex flex-col bg-gray-100 items-center gap-8 rounded-2xl max-w-screen-sm mx-auto p-9">
+        <Image
+          className="inline-block my-1"
+          src={logoIcon}
+          width={300}
+          alt="Whisper"
+          priority
+        />
+        {status === 'logged-in' ? null : <h1 className="font-bold text-2xl">Login</h1>}
         <div className="flex flex-row gap-8 items-baseline">
           {(zupass.status === "logged-out" || zupass.anonymous) && (
-            <ZupassLoginButton anonymous />
+            <ZupassLoginButton anonymous className='primaryButton'/>
           )}
         </div>
         <Status />
@@ -66,7 +88,7 @@ function Status() {
 
 function Pellet({ children }: { children: string }) {
   return (
-    <span className="inline-block bg-gray-100 rounded-md px-2 text-sm font-bold ml-2">
+    <span className="inline-block rounded-md px-2 text-sm font-bold ml-2">
       {children}
     </span>
   );

@@ -5,3 +5,11 @@
 :root {
   font: 16px system-ui, sans-serif;
 }
+
+
+.primaryButton{
+  background: rgb(252, 197, 197);
+  padding: 8px;
+  color: #fff;
+  border-radius: 8px;
+} 
