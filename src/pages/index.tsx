@@ -1,7 +1,18 @@
 import { useZupass, ZupassLoginButton } from "zukit";
+import { useSearchParams } from "next/navigation";
+import {useEffect} from 'react';
+
 
 export default function Home() {
   const [zupass] = useZupass();
+  const searchParams = useSearchParams();
+  const chatId = searchParams.get('chatId') || ''
+  useEffect(() => {
+    if(!chatId){
+      return ;
+    }
+    localStorage.setItem('chatId', chatId)
+  },[chatId])
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-8">
       <main className="flex flex-col items-center gap-8 bg-white rounded-2xl max-w-screen-sm mx-auto h-[24rem] p-8">
